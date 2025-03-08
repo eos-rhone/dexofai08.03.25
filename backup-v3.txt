@@ -1,0 +1,112 @@
+# Sauvegarde DexofAI - Version 3
+
+## Structure des fichiers
+- src/
+  - components/
+    - Navbar.tsx (Navigation principale avec menu déroulant)
+    - SubNav.tsx (Navigation secondaire)
+    - ThemeSelector.tsx (Sélecteur de thème avec animations)
+  - contexts/
+    - ThemeContext.tsx (Gestion des thèmes)
+  - lib/
+    - database.types.ts (Types TypeScript pour Supabase)
+    - supabase.ts (Client et utilitaires Supabase)
+    - utils.ts (Fonctions utilitaires)
+  - pages/
+    - Home.tsx (Page d'accueil avec recherche et statistiques)
+    - Categories.tsx (Grille des catégories d'IA)
+    - Assistant.tsx (Chatbot d'aide à la recherche)
+    - Learn.tsx (Tutoriels et ressources d'apprentissage)
+    - News.tsx (Actualités de l'IA)
+    - Forum.tsx (Espace de discussion)
+    - Publish.tsx (Publication d'outils IA)
+    - Newsletter.tsx (Inscription à la newsletter)
+    - Contact.tsx (Formulaire de contact)
+    - Rankings.tsx (Classement des outils)
+  - App.tsx
+  - main.tsx
+  - index.css
+
+## Base de données
+- Tables principales :
+  - ai_tools (Outils d'IA)
+  - categories (Catégories)
+  - reviews (Avis)
+  - tool_features (Fonctionnalités)
+  - tool_pricing (Plans tarifaires)
+  - tool_stats (Statistiques)
+  - newsletter_subscriptions (Abonnements newsletter)
+
+- Nombre d'outils par catégorie :
+  - Assistants & Chatbots : 25+
+  - Génération d'images : 50+
+  - Création musicale : 15+
+  - Analyse de données : 15+
+  - Voix & Parole : 15+
+  - Business & Marketing : 15+
+  - Éducation : 10+
+  - Vidéo & Animation : 10+
+  - Rédaction & Contenu : 10+
+
+## Fonctionnalités principales
+1. Navigation
+   - Menu principal avec sous-menus
+   - Navigation fluide entre les pages
+   - Animations de transition
+
+2. Design
+   - Thème sombre par défaut
+   - Animations et transitions fluides
+   - Effets de survol élaborés
+   - Icônes animées
+   - Particules et effets de lueur
+   - Design responsive
+
+3. Pages complètes
+   - Accueil avec barre de recherche
+   - Catégories avec filtres
+   - Assistant IA conversationnel
+   - Section apprentissage avec tutoriels
+   - Actualités avec filtres par langue
+   - Forum de discussion
+   - Publication d'outils IA avec plans
+   - Newsletter avec sélection d'intérêts
+   - Contact avec formulaire animé
+   - Classement des outils
+
+4. Base de données
+   - Intégration Supabase
+   - Politiques de sécurité RLS
+   - Migrations SQL
+   - Types TypeScript générés
+
+## Thèmes et styles
+- Palette de couleurs :
+  - Principal : bleu (#3B82F6)
+  - Fond : noir (#0B0F19)
+  - Accents : dégradés de bleu à violet
+- Animations personnalisées :
+  - float
+  - fade-in
+  - spin-slow
+  - particle effects
+- Composants réutilisables stylisés
+
+## Points forts
+- Design moderne et cohérent
+- Animations fluides et professionnelles
+- Interface utilisateur intuitive
+- Formulaires interactifs
+- Gestion des thèmes
+- Responsive design
+- Sécurité avec Supabase
+- Base de données complète
+- Migrations SQL robustes
+
+## Dernières modifications
+- Ajout de nombreux outils dans toutes les catégories
+- Amélioration des migrations SQL
+- Optimisation des requêtes Supabase
+- Enrichissement des données de test
+
+Date de sauvegarde : ${new Date().toLocaleString()}

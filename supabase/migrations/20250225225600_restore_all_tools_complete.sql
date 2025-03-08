@@ -1,0 +1,26 @@
+-- Restauration de tous les outils - Exécution de tous les batches
+\i 20250225180037_insert_ai_tools_batch1.sql
+\i 20250225180038_insert_ai_tools_batch2.sql
+\i 20250225180039_insert_ai_tools_batch3.sql
+\i 20250225180040_insert_ai_tools_batch4.sql
+\i 20250225180041_insert_ai_tools_batch5.sql
+\i 20250225180042_insert_ai_tools_batch6.sql
+\i 20250225183800_insert_ai_tools_batch7.sql
+\i 20250225184200_insert_ai_tools_batch8.sql
+\i 20250225184300_insert_ai_tools_batch9.sql
+\i 20250225184400_insert_ai_tools_batch10.sql
+\i 20250225184500_insert_ai_tools_batch11.sql
+\i 20250225184600_insert_ai_tools_batch12.sql
+\i 20250225184700_insert_ai_tools_batch13.sql
+\i 20250225184800_insert_ai_tools_batch14.sql
+\i 20250225184900_insert_ai_tools_batch15.sql
+\i 20250225185000_insert_ai_tools_batch16.sql
+\i 20250225185100_insert_ai_tools_batch17.sql
+\i 20250225185200_insert_ai_tools_batch18.sql
+\i 20250225185300_insert_ai_tools_batch19.sql
+\i 20250225185400_insert_ai_tools_batch20.sql
+\i 20250225185500_insert_ai_tools_batch21.sql
+\i 20250225185600_insert_ai_tools_batch22.sql
+\i 20250225185700_insert_ai_tools_batch23.sql
+\i 20250225185800_insert_ai_tools_batch24.sql
+\i 20250225185900_insert_ai_tools_batch25.sql

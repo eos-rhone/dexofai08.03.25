@@ -1,0 +1,83 @@
+# Sauvegarde DexofAI - Version 2
+
+## Structure des fichiers
+- src/
+  - components/
+    - Navbar.tsx (Navigation principale avec menu déroulant)
+    - SubNav.tsx (Navigation secondaire)
+    - ThemeSelector.tsx (Sélecteur de thème avec animations)
+  - contexts/
+    - ThemeContext.tsx (Gestion des thèmes)
+  - pages/
+    - Home.tsx (Page d'accueil avec recherche et statistiques)
+    - Categories.tsx (Grille des catégories d'IA)
+    - Assistant.tsx (Chatbot d'aide à la recherche)
+    - Learn.tsx (Tutoriels et ressources d'apprentissage)
+    - News.tsx (Actualités de l'IA)
+    - Forum.tsx (Espace de discussion)
+    - Publish.tsx (Publication d'outils IA)
+    - Newsletter.tsx (Inscription à la newsletter)
+    - Contact.tsx (Formulaire de contact)
+  - App.tsx
+  - main.tsx
+  - index.css
+
+## Fonctionnalités principales
+1. Navigation
+   - Menu principal avec sous-menus
+   - Navigation fluide entre les pages
+   - Animations de transition
+
+2. Design
+   - Thème sombre par défaut
+   - Animations et transitions fluides
+   - Effets de survol élaborés
+   - Icônes animées
+   - Particules et effets de lueur
+   - Design responsive
+
+3. Pages complètes
+   - Accueil avec barre de recherche
+   - Catégories avec filtres
+   - Assistant IA conversationnel
+   - Section apprentissage avec tutoriels
+   - Actualités avec filtres par langue
+   - Forum de discussion
+   - Publication d'outils IA avec plans
+   - Newsletter avec sélection d'intérêts
+   - Contact avec formulaire animé
+
+4. Base de données
+   - Intégration Supabase
+   - Table newsletter_subscriptions
+   - Politiques de sécurité RLS
+
+## Thèmes et styles
+- Palette de couleurs :
+  - Principal : bleu (#3B82F6)
+  - Fond : noir (#0B0F19)
+  - Accents : dégradés de bleu à violet
+- Animations personnalisées :
+  - float
+  - fade-in
+  - spin-slow
+  - particle effects
+- Composants réutilisables stylisés
+
+## Dernières modifications
+- Ajout des pages Newsletter et Contact
+- Amélioration des animations
+- Mise à jour du design des formulaires
+- Ajout d'effets de particules
+- Intégration de la gestion des thèmes
+
+## Points forts
+- Design moderne et cohérent
+- Animations fluides et professionnelles
+- Interface utilisateur intuitive
+- Formulaires interactifs
+- Gestion des thèmes
+- Responsive design
+- Sécurité avec Supabase
+
+Date de sauvegarde : ${new Date().toLocaleString()}

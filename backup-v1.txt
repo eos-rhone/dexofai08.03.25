@@ -1,0 +1,46 @@
+# Sauvegarde DexofAI - Version 1
+
+## Structure des fichiers
+- src/
+  - components/
+    - Navbar.tsx
+  - pages/
+    - Home.tsx
+    - Categories.tsx
+    - Assistant.tsx
+    - Learn.tsx
+    - News.tsx
+    - Forum.tsx
+    - Publish.tsx
+  - App.tsx
+  - main.tsx
+  - index.css
+
+## État actuel
+- Page d'accueil avec recherche et statistiques
+- Navigation avec menu déroulant
+- Pages complètes :
+  - Catégories
+  - Assistant IA
+  - Actualités
+  - Forum
+  - Publier une IA (dernière ajoutée)
+
+## Points clés
+- Design cohérent en dark mode
+- Palette de couleurs : bleu (#3B82F6) et dark (#0B0F19)
+- Composants réutilisables
+- Responsive design
+- Intégration des icônes Lucide React
+
+## Dernières modifications
+- Ajout de la page "Publier une IA"
+- Mise à jour du menu de navigation
+- Refonte de la page d'accueil
+
+## Pour restaurer
+1. Tous les fichiers sources sont dans le dossier src/
+2. Les dépendances sont dans package.json
+3. La configuration Tailwind est dans tailwind.config.js
+
+Date de sauvegarde : ${new Date().toLocaleString()}

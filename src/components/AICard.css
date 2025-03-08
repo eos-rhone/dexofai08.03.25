@@ -1,0 +1,77 @@
+.ai-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 1.5rem;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.ai-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(0, 82, 255, 0.1),
+    transparent
+  );
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.ai-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0, 82, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.ai-card:hover::before {
+  opacity: 1;
+}
+
+.ai-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 15px;
+  margin-bottom: 1rem;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ai-content h3 {
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #fff, #b3b3b3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ai-content p {
+  color: #a3a3a3;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.external-link {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: #0052ff;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  background: rgba(0, 82, 255, 0.1);
+}
+
+.external-link:hover {
+  background: rgba(0, 82, 255, 0.2);
+  transform: translateY(-2px);
+}

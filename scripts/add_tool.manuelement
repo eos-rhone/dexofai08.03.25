@@ -1,0 +1,42 @@
+-- Exemple d'ajout d'un nouvel outil
+-- Remplacez les valeurs entre < > par vos propres valeurs
+
+INSERT INTO public.ai_tools (
+    name,               -- Nom de l'outil
+    slug,               -- URL-friendly version du nom (en minuscules, avec des tirets)
+    description,        -- Description de l'outil
+    website_url,        -- Site web de l'outil
+    category_id,        -- ID de la catégorie (voir la table categories)
+    metrics            -- Métriques de l'outil en JSON
+) VALUES (
+    '<nom_outil>',                           -- ex: 'ChatGPT'
+    '<slug_outil>',                          -- ex: 'chatgpt'
+    '<description_outil>',                   -- ex: 'Un assistant IA conversationnel'
+    '<url_site>',                           -- ex: 'https://chat.openai.com'
+    (SELECT id FROM public.categories 
+     WHERE name = '<nom_categorie>'),        -- ex: 'Assistants & Chatbots'
+    '{"monthly_users": 0, 
+      "total_views": 0, 
+      "rating": 0}'::jsonb
+);
+
+-- Exemple concret :
+/*
+INSERT INTO public.ai_tools (
+    name,
+    slug,
+    description,
+    website_url,
+    category_id,
+    metrics
+) VALUES (
+    'ChatGPT',
+    'chatgpt',
+    'Assistant IA conversationnel développé par OpenAI',
+    'https://chat.openai.com',
+    (SELECT id FROM public.categories WHERE name = 'Assistants & Chatbots'),
+    '{"monthly_users": 100000000, 
+      "total_views": 500000000, 
+      "rating": 4.8}'::jsonb
+);
+*/

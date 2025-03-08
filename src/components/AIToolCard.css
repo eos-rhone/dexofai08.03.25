@@ -1,0 +1,58 @@
+.ai-tool-card {
+  @apply relative bg-gray-900/50 rounded-lg overflow-hidden border border-gray-800 cursor-pointer;
+  @apply hover:border-blue-500 transition-all transform hover:scale-[1.02];
+  @apply hover:shadow-xl hover:shadow-blue-500/10;
+}
+
+.rank-badge {
+  @apply absolute top-3 left-3 bg-blue-500 text-white px-3 py-1 rounded-full;
+  @apply text-sm font-semibold z-10;
+}
+
+.card-image-container {
+  @apply relative w-full h-32 overflow-hidden;
+}
+
+.card-image {
+  @apply w-full h-full object-cover;
+  @apply transform group-hover:scale-110 transition-transform duration-700;
+}
+
+.card-content {
+  @apply p-6;
+}
+
+.card-header {
+  @apply flex justify-between items-start mb-4;
+}
+
+.card-header h3 {
+  @apply text-xl font-semibold text-white;
+}
+
+.external-link-wrapper {
+  @apply ml-2 p-2 rounded-full;
+  @apply hover:bg-gray-700 transition-colors;
+  @apply text-blue-500;
+}
+
+.card-description {
+  @apply text-gray-300 text-sm mb-4;
+  @apply line-clamp-2;
+}
+
+.card-stats {
+  @apply flex items-center gap-4;
+}
+
+.stat-item {
+  @apply flex items-center gap-1 text-sm text-gray-400;
+}
+
+.stat-icon {
+  @apply w-4 h-4 text-blue-500;
+}
+
+.stat-label {
+  @apply text-gray-500;
+}

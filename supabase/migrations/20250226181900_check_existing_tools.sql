@@ -1,0 +1,47 @@
+-- Vérifier les outils existants
+SELECT t.name, t.slug, c.name as category
+FROM ai_tools t
+LEFT JOIN categories c ON t.category_id = c.id
+WHERE t.slug IN (
+    'weights-and-biases',
+    'neptune-ai',
+    'dvc',
+    'clearml',
+    'comet-ml',
+    'determined-ai',
+    'pachyderm',
+    'domino-data-lab',
+    'cnvrg-io',
+    'polyaxon',
+    'darktrace',
+    'crowdstrike',
+    'cylance',
+    'deep-instinct',
+    'extrahop',
+    'sentinelone',
+    'blue-hexagon',
+    'vectra-ai',
+    'cynet',
+    'cloudstrike',
+    'github-copilot',
+    'tabnine',
+    'kite',
+    'codeguru',
+    'deepcode',
+    'snyk',
+    'codesee',
+    'replit',
+    'sourcegraph',
+    'codestream',
+    'trifacta',
+    'dataiku-prep',
+    'alteryx-prep',
+    'talend',
+    'paxata',
+    'openrefine',
+    'databricks-prep',
+    'tamr',
+    'datarobot-prep',
+    'informatica'
+)
+ORDER BY t.slug;

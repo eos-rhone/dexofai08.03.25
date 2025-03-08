@@ -1,0 +1,939 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Reset des styles de base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Theme Styles */
+.theme-dark {
+  --bg-primary: #0B0F19;
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --accent: #3b82f6;
+}
+
+.theme-light {
+  --bg-primary: #ffffff;
+  --text-primary: #93A7C2;
+  --text-secondary: #CCCCCC;
+  --accent: #93A7C2;
+  --card-bg: #f8f9fa;
+  --hover-bg: #e9ecef;
+  --border-color: #d1d5db;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+.theme-pastel {
+  --bg-primary: rgb(241 194 240 / 50%);  /* Fond rose pastel */
+  --text-primary: #cbe5f2;  /* Nouveau texte principal bleu pastel */
+  --text-secondary: #f9d3fb;  /* Texte secondaire rose clair */
+  --accent: #FFB5E8;  /* Accent rose pastel */
+  --card-bg: rgb(241 194 240 / 50%);  /* Fond des cartes */
+  --hover-bg: rgb(245 52 212 / 25%);  /* Hover rose */
+  --border-color: #cafad8;  /* Bordure */
+  --shadow-color: rgba(202, 250, 216, 0.2);  /* Ombre assortie */
+  
+  /* Couleurs supplémentaires pour les catégories */
+  --category-1: #FFB5E8;  /* Rose pastel */
+  --category-2: #B5EAFF;  /* Bleu pastel */
+  --category-3: #B8F0B8;  /* Vert pastel */
+  --category-4: #FFE5B5;  /* Orange pastel */
+  --category-5: #E5B5FF;  /* Violet pastel */
+  --category-6: #B5FFE5;  /* Menthe pastel */
+}
+
+.theme-cyberpunk {
+  --bg-primary: #0a0a16;
+  --text-primary: #ff00ff;
+  --text-secondary: #00ffff;
+  --accent: #ff00ff;
+}
+
+.theme-forest {
+  --bg-primary: #1a2f1a;
+  --text-primary: #c1d9c1;
+  --text-secondary: #86a886;
+  --accent: #4ade80;
+}
+
+.theme-aqua {
+  --bg-primary: #0077be;
+  --text-primary: #ffffff;
+  --text-secondary: #d1ecf1;
+  --accent: #00b4d8;
+}
+
+.theme-blood {
+  --bg-primary: #2c0000;
+  --text-primary: #ffffff;
+  --text-secondary: #d1d1d1;
+  --accent: #ff0000;
+}
+
+.theme-citrus {
+  --bg-primary: #fff3cd;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6b6b;
+  --accent: #ffc107;
+}
+
+/* Application des variables de thème */
+.bg-\[\#0B0F19\] {
+  background-color: var(--bg-primary);
+}
+
+.text-white {
+  color: var(--text-primary);
+}
+
+.text-gray-400 {
+  color: var(--text-secondary);
+}
+
+.text-blue-500 {
+  color: var(--accent);
+}
+
+.bg-blue-500 {
+  background-color: var(--accent);
+}
+
+.bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.bg-gray-900\/80 {
+  background-color: rgba(17, 24, 39, 0.8);
+}
+
+.bg-gray-900\/50 {
+  background-color: rgba(17, 24, 39, 0.5);
+}
+
+/* Styles spécifiques au thème clair */
+.theme-light {
+  --bg-primary: #ffffff;
+  --text-primary: #93A7C2;
+  --text-secondary: #CCCCCC;
+  --accent: #93A7C2;
+  
+  /* Couleurs supplémentaires */
+  --card-bg: #f8f9fa;
+  --hover-bg: #e9ecef;
+  --border-color: #d1d5db;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Override de la couleur rgb(31 41 55) pour le thème clair */
+.theme-light .bg-gray-800,
+.theme-light .bg-gray-900 {
+  background-color: #5d9bff1a !important;
+}
+
+.theme-light [class*="bg-gray-800"],
+.theme-light [class*="bg-gray-900"] {
+  background-color: #5d9bff1a !important;
+}
+
+.theme-light .text-white {
+  color: var(--text-primary);
+}
+
+.theme-light .text-gray-400,
+.theme-light .text-gray-500,
+.theme-light .text-gray-300 {
+  color: var(--text-secondary);
+}
+
+.theme-light .bg-gray-900\/80,
+.theme-light .bg-gray-900\/50,
+.theme-light .bg-black\/40 {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.theme-light a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.theme-light a:hover {
+  text-decoration: underline;
+}
+
+.theme-light .btn-primary {
+  background-color: var(--accent);
+  color: #ffffff;  /* Texte blanc sur fond coloré */
+  font-weight: 500;
+}
+
+.theme-light .btn-primary:hover {
+  background-color: #0043a6;  /* Version plus foncée pour le hover */
+}
+
+.theme-light .btn-outline {
+  color: var(--text-primary);
+  border: 2px solid var(--text-primary);
+  background-color: transparent;
+}
+
+.theme-light .btn-outline:hover {
+  background-color: var(--hover-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-light *:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme-light .hover\:bg-gray-800:hover {
+  background-color: var(--hover-bg);
+}
+
+.theme-light .hover\:text-gray-300:hover,
+.theme-light .hover\:text-gray-400:hover,
+.theme-light .hover\:text-white:hover {
+  color: var(--accent);
+}
+
+/* Media queries pour la responsivité */
+@media (max-width: 640px) {
+  .theme-light {
+    /* Augmenter légèrement le contraste sur mobile */
+    --text-primary: #4d4d4d;   /* Plus foncé sur petit écran */
+    --text-secondary: #666666; /* Plus foncé sur petit écran */
+  }
+}
+
+/* Styles pour les logos et boutons */
+.theme-light .w-10.h-10.rounded-lg[class*="bg-gray"],
+.theme-light .w-8.h-8.rounded-lg[class*="bg-gray"],
+.theme-light .bg-gray-900\/80 {
+  background-color: transparent !important;
+}
+
+/* Conserver les animations */
+.theme-light .group:hover .transform {
+  transform: scale(1.05);
+}
+
+.theme-light .group:hover .transition-opacity {
+  opacity: 1;
+}
+
+/* Ajuster la couleur du texte dans le thème clair */
+.theme-light .text-gray-400 {
+  color: var(--text-secondary);
+}
+
+.theme-light .hover\:bg-gray-800:hover {
+  background-color: transparent !important;
+}
+
+/* Styles de survol */
+.hover\:bg-gray-800:hover {
+  background-color: rgba(31, 41, 55, 0.8);
+}
+
+.hover\:text-blue-500:hover {
+  color: var(--accent);
+}
+
+/* Ombres */
+.shadow-blue-500\/10 {
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.1);
+}
+
+.hover\:shadow-blue-500\/10:hover {
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.1);
+}
+
+/* Enhanced Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 10s linear infinite;
+}
+
+@keyframes float-particle {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(10px, -10px); }
+}
+
+.animate-float-particle-1 {
+  animation: float-particle 4s ease-in-out infinite;
+}
+
+.animate-float-particle-2 {
+  animation: float-particle 4s ease-in-out infinite;
+  animation-delay: -1s;
+}
+
+.animate-float-particle-3 {
+  animation: float-particle 4s ease-in-out infinite;
+  animation-delay: -2s;
+}
+
+@keyframes float-particle-1 {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(10px, -10px);
+  }
+}
+
+.animate-float-particle-1 {
+  animation: float-particle-1 3s ease-in-out infinite;
+}
+
+@keyframes float-particle-2 {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-10px, 10px);
+  }
+}
+
+.animate-float-particle-2 {
+  animation: float-particle-2 4s ease-in-out infinite;
+}
+
+@keyframes float-particle-3 {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(10px, 10px);
+  }
+}
+
+.animate-float-particle-3 {
+  animation: float-particle-3 5s ease-in-out infinite;
+}
+
+/* Animation de scintillement */
+@keyframes shimmer {
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.animate-shimmer {
+  isolation: isolate;
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmer 2s infinite;
+  pointer-events: none;
+}
+
+/* Animation de brouillard */
+@keyframes fog-horizontal {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fog-horizontal-reverse {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes fog-vertical {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes fog-vertical-reverse {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.animate-fog-horizontal {
+  animation: fog-horizontal 8s linear infinite;
+}
+
+.animate-fog-horizontal-reverse {
+  animation: fog-horizontal-reverse 8s linear infinite;
+}
+
+.animate-fog-vertical {
+  animation: fog-vertical 10s linear infinite;
+}
+
+.animate-fog-vertical-reverse {
+  animation: fog-vertical-reverse 10s linear infinite;
+}
+
+/* Button Styles */
+.btn {
+  @apply px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2;
+}
+
+.btn-primary {
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+.btn-secondary {
+  @apply bg-gray-500 text-white hover:bg-gray-600;
+}
+
+.btn-outline {
+  @apply border border-gray-800 hover:border-blue-500 text-gray-400 hover:text-blue-500;
+}
+
+/* Supprimer le fond gris des icônes dans le thème clair */
+.theme-light div[class*="relative bg-gray-900/80"],
+.theme-light div[class*="relative"] > div[class*="bg-gray-900"],
+.theme-light div[class*="relative"] > div[class*="relative"] > div[class*="bg-gray"],
+.theme-light div[class*="bg-gray-900/80"],
+.theme-light div[class*="bg-gray-900/50"],
+.theme-light .bg-gray-900,
+.theme-light .bg-gray-800 {
+  background-color: #004ce20a !important;
+}
+
+/* Conserver les autres styles de fond gris pour les conteneurs */
+.theme-light .bg-gray-900\/50:not(div[class*="relative"] *) {
+  background-color: rgba(93, 155, 255, 0.1) !important;  /* #5d9bff1a */
+}
+
+/* Conserver les animations et autres styles */
+.theme-light .group:hover .transform {
+  transform: scale(1.05);
+}
+
+.theme-light .group:hover .transition-opacity {
+  opacity: 1;
+}
+
+/* Ajuster la couleur du texte dans le thème clair */
+.theme-light .text-gray-400 {
+  color: var(--text-secondary);
+}
+
+.theme-light .hover\:bg-gray-800:hover {
+  background-color: transparent !important;
+}
+
+/* Conserver les animations et autres styles */
+.theme-light .group:hover .transform {
+  transform: scale(1.05);
+}
+
+.theme-light .group:hover .transition-opacity {
+  opacity: 1;
+}
+
+/* Ajuster la couleur du texte dans le thème clair */
+.theme-light .text-gray-400 {
+  color: var(--text-secondary);
+}
+
+.theme-light .hover\:bg-gray-800:hover {
+  background-color: transparent !important;
+}
+
+/* Supprimer le fond gris dans les pages pour le thème clair */
+.theme-light [class*="bg-gray-900"] {
+  background-color: #004ce20a !important;
+}
+
+/* Changer la couleur des icônes dans le thème clair */
+.theme-light svg[class*="text-blue"],
+.theme-light svg.text-blue-500 {
+  color: #2C3E50 !important;
+}
+
+/* Conserver les animations et autres styles */
+.theme-light .group:hover .transform {
+  transform: scale(1.05);
+}
+
+.theme-light .group:hover .transition-opacity {
+  opacity: 1;
+}
+
+/* Changer la couleur des icônes en gris-bleu foncé dans le thème clair */
+.theme-light .text-gray-blue {
+  color: #2C3E50 !important;
+}
+
+.theme-light [class*="text-gray-blue"] {
+  color: #2C3E50 !important;
+}
+
+/* Conserver les autres styles */
+
+/* Changer la couleur des icônes dans le thème clair */
+.theme-light .text-blue-500,
+.theme-light .text-yellow-500,
+.theme-light .text-purple-500,
+.theme-light .text-green-500,
+.theme-light .text-red-500 {
+  color: #2C3E50 !important;
+}
+
+/* Conserver les styles pour les textes colorés */
+.theme-light h1.text-transparent {
+  color: transparent !important;
+}
+
+/* Conserver les animations et autres styles */
+.theme-light .group:hover .transform {
+  transform: scale(1.05);
+}
+
+.theme-light .group:hover .transition-opacity {
+  opacity: 1;
+}
+
+/* Ajuster la couleur du texte dans le thème clair */
+.theme-light .text-gray-400 {
+  color: var(--text-secondary);
+}
+
+.theme-light .hover\:bg-gray-800:hover {
+  background-color: transparent !important;
+}
+
+/* Changer la couleur des icônes de catégories dans le thème clair */
+.theme-light .text-white,
+.theme-light .text-blue-500,
+.theme-light .text-yellow-500,
+.theme-light .text-purple-500,
+.theme-light .text-green-500,
+.theme-light .text-red-500 {
+  color: #2C3E50 !important;
+}
+
+/* Conserver les styles pour les textes colorés */
+.theme-light h1.text-transparent {
+  color: transparent !important;
+}
+
+/* Conserver les animations et autres styles */
+.theme-light .group:hover .transform {
+  transform: scale(1.05);
+}
+
+.theme-light .group:hover .transition-opacity {
+  opacity: 1;
+}
+
+/* Changer la couleur des icônes de catégories dans le thème clair */
+.theme-light div[class*="rounded-2xl"] .text-white {
+  color: #2C3E50 !important;
+}
+
+/* Conserver les couleurs d'animation */
+.theme-light .animate-spin-slow .text-yellow-500,
+.theme-light .animate-float-particle-1 ~ .text-yellow-500 {
+  color: #EAB308 !important;
+}
+
+.theme-light .animate-spin-slow .text-purple-500,
+.theme-light .animate-float-particle-2 ~ .text-purple-500 {
+  color: #A855F7 !important;
+}
+
+.theme-light .animate-spin-slow .text-green-500,
+.theme-light .animate-float-particle-3 ~ .text-green-500 {
+  color: #22C55E !important;
+}
+
+.theme-light .animate-spin-slow .text-red-500 {
+  color: #EF4444 !important;
+}
+
+.theme-light .animate-spin-slow .text-blue-500 {
+  color: #3B82F6 !important;
+}
+
+/* Conserver les styles pour les textes colorés */
+.theme-light h1.text-transparent {
+  color: transparent !important;
+}
+
+/* Conserver les animations et autres styles */
+.theme-light .group:hover .transform {
+  transform: scale(1.05);
+}
+
+.theme-light .group:hover .transition-opacity {
+  opacity: 1;
+}
+
+/* Rendre le fond de l'icône transparent dans le thème clair */
+.theme-light div[class*="bg-gray-900"] {
+  background-color: transparent !important;
+}
+
+/* Rendre le fond des icônes de catégories transparent dans le thème clair */
+.theme-light div[class*="rounded-2xl"] {
+  background-color: transparent !important;
+}
+
+/* Changer la couleur des icônes de catégories dans le thème clair */
+.theme-light .text-white,
+.theme-light .text-blue-500,
+.theme-light .text-yellow-500,
+.theme-light .text-purple-500,
+.theme-light .text-green-500,
+.theme-light .text-red-500 {
+  color: #2C3E50 !important;
+}
+
+/* Conserver les styles pour les textes colorés */
+.theme-light h1.text-transparent {
+  color: transparent !important;
+}
+
+/* Conserver les animations et autres styles */
+.theme-light .group:hover .transform {
+  transform: scale(1.05);
+}
+
+.theme-light .group:hover .transition-opacity {
+  opacity: 1;
+}
+
+/* Changer la couleur des icônes de catégories dans le thème clair */
+.theme-light div[class*="rounded-2xl"] .text-white {
+  color: #2C3E50 !important;
+}
+
+/* Conserver les couleurs d'animation */
+.theme-light .animate-spin-slow .text-yellow-500,
+.theme-light .animate-float-particle-1 ~ .text-yellow-500 {
+  color: #EAB308 !important;
+}
+
+.theme-light .animate-spin-slow .text-purple-500,
+.theme-light .animate-float-particle-2 ~ .text-purple-500 {
+  color: #A855F7 !important;
+}
+
+.theme-light .animate-spin-slow .text-green-500,
+.theme-light .animate-float-particle-3 ~ .text-green-500 {
+  color: #22C55E !important;
+}
+
+.theme-light .animate-spin-slow .text-red-500 {
+  color: #EF4444 !important;
+}
+
+.theme-light .animate-spin-slow .text-blue-500 {
+  color: #3B82F6 !important;
+}
+
+/* Conserver les styles pour les textes colorés */
+.theme-light h1.text-transparent {
+  color: transparent !important;
+}
+
+/* Conserver les animations et autres styles */
+.theme-light .group:hover .transform {
+  transform: scale(1.05);
+}
+
+.theme-light .group:hover .transition-opacity {
+  opacity: 1;
+}
+
+/* Rendre le fond de l'icône transparent dans le thème clair */
+.theme-light .bg-gray-900\/80 {
+  background-color: transparent !important;
+}
+
+/* Changer la couleur des icônes de catégories dans le thème clair */
+.theme-light .text-white,
+.theme-light .text-blue-500,
+.theme-light .text-yellow-500,
+.theme-light .text-purple-500,
+.theme-light .text-green-500,
+.theme-light .text-red-500 {
+  color: #2C3E50 !important;
+}
+
+/* Conserver les styles pour les textes colorés */
+.theme-light h1.text-transparent {
+  color: transparent !important;
+}
+
+/* Conserver les animations et autres styles */
+.theme-light .group:hover .transform {
+  transform: scale(1.05);
+}
+
+.theme-light .group:hover .transition-opacity {
+  opacity: 1;
+}
+
+/* Changer la couleur des icônes de catégories dans le thème clair */
+.theme-light div[class*="rounded-2xl"] .text-white {
+  color: #2C3E50 !important;
+}
+
+/* Conserver les couleurs d'animation */
+.theme-light .animate-spin-slow .text-yellow-500,
+.theme-light .animate-float-particle-1 ~ .text-yellow-500 {
+  color: #EAB308 !important;
+}
+
+.theme-light .animate-spin-slow .text-purple-500,
+.theme-light .animate-float-particle-2 ~ .text-purple-500 {
+  color: #A855F7 !important;
+}
+
+.theme-light .animate-spin-slow .text-green-500,
+.theme-light .animate-float-particle-3 ~ .text-green-500 {
+  color: #22C55E !important;
+}
+
+.theme-light .animate-spin-slow .text-red-500 {
+  color: #EF4444 !important;
+}
+
+.theme-light .animate-spin-slow .text-blue-500 {
+  color: #3B82F6 !important;
+}
+
+/* Conserver les styles pour les textes colorés */
+.theme-light h1.text-transparent {
+  color: transparent !important;
+}
+
+/* Conserver les animations et autres styles */
+.theme-light .group:hover .transform {
+  transform: scale(1.05);
+}
+
+.theme-light .group:hover .transition-opacity {
+  opacity: 1;
+}
+
+/* Styles spécifiques pour le thème pastel */
+.theme-pastel .text-gray-400 {
+  color: #f9d3fb !important;
+}
+
+.theme-pastel .text-blue-500,
+.theme-pastel .text-blue-500 span {
+  color: #cafad8 !important;
+}
+
+.theme-pastel .bg-gray-800,
+.theme-pastel .bg-gray-900,
+.theme-pastel [class*="bg-gray-800"],
+.theme-pastel [class*="bg-gray-900"],
+.theme-pastel .bg-gray-900\/80,
+.theme-pastel .bg-gray-900\/50,
+.theme-pastel .bg-black\/40 {
+  background-color: rgb(153 92 247 / 35%) !important;
+}
+
+/* Style pour la navbar */
+.theme-pastel nav {
+  background-color: rgb(153 92 247 / 35%) !important;
+  border-bottom: 1px solid #cafad8 !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Style pour les cartes */
+.theme-pastel .tool-card,
+.theme-pastel .category-card {
+  background-color: rgb(153 92 247 / 35%) !important;
+  transition: all 0.2s ease;
+}
+
+.theme-pastel .tool-card:hover,
+.theme-pastel .category-card:hover {
+  background-color: rgb(153 92 247 / 45%) !important;
+  transform: translateY(-2px);
+}
+
+.theme-pastel .text-white {
+  color: #cbe5f2 !important;
+}
+
+.theme-pastel .border,
+.theme-pastel .border-t,
+.theme-pastel .border-b,
+.theme-pastel .border-l,
+.theme-pastel .border-r,
+.theme-pastel [class*="border"] {
+  border-color: #cafad8 !important;
+}
+
+.theme-pastel .ring-1 {
+  --tw-ring-color: #cafad8 !important;
+}
+
+.theme-pastel .divide-y > * {
+  border-color: #cafad8 !important;
+}
+
+/* Focus et hover pour les bordures */
+.theme-pastel *:focus {
+  outline-color: #cafad8 !important;
+}
+
+.theme-pastel .hover\:border:hover {
+  border-color: #cafad8 !important;
+}
+
+/* Styles pour les formes géométriques du SpotlightEffect */
+.triangle {
+  position: relative;
+  transform-origin: 50% 100%;
+}
+
+#spotlight-container .absolute {
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+}
+
+#spotlight-container .rounded-full,
+#spotlight-container .rounded-lg,
+#spotlight-container .triangle {
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes float-icon {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(4px, -4px) rotate(5deg);
+  }
+  50% {
+    transform: translate(0, -8px) rotate(0deg);
+  }
+  75% {
+    transform: translate(-4px, -4px) rotate(-5deg);
+  }
+}
+
+.animate-float-icon {
+  animation: float-icon 3s ease-in-out infinite;
+}
+
+.animate-float-icon-delay-1 {
+  animation: float-icon 3s ease-in-out infinite;
+  animation-delay: 0.6s;
+}
+
+.animate-float-icon-delay-2 {
+  animation: float-icon 3s ease-in-out infinite;
+  animation-delay: 1.2s;
+}
+
+.animate-float-icon-delay-3 {
+  animation: float-icon 3s ease-in-out infinite;
+  animation-delay: 1.8s;
+}
+
+.animate-float-icon-delay-4 {
+  animation: float-icon 3s ease-in-out infinite;
+  animation-delay: 2.4s;
+}
