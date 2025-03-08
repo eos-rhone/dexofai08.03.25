@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { TrendingUp, Star, Users, Eye, MessageSquare, ArrowUpRight, Search, Trophy, Sparkles, Zap, Crown, ChevronDown, Flame, Clock, ThumbsUp } from 'lucide-react';
+import { TrendingUp, Star, Users, Eye, MessageSquare, ArrowUpRight, Search, Trophy, Sparkles, Zap, Crown, ChevronDown, Flame, Clock, ThumbsUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getTools, getCategories } from '../lib/supabase';
 import PopupTopRanking from '../components/PopupTopRanking';
 
@@ -33,11 +33,11 @@ interface Category {
 }
 
 const calculatePopularityScore = (tool: Tool) => {
-  const monthlyUsersScore = Math.log10(tool.monthly_users + 1) / 6;
-  const viewsScore = Math.log10(tool.total_views + 1) / 6;
-  const reviewScore = (tool.average_rating * tool.total_reviews) / 50000;
-  
-  return monthlyUsersScore * 0.5 + viewsScore * 0.3 + reviewScore * 0.2;
+  let score = 0;
+  score += tool.monthly_users || 0;
+  score += (tool.total_reviews || 0) * 100;
+  score += (tool.average_rating || 0) * 1000;
+  return score;
 };
 
 const TopToolCard = React.memo(({ tool, index }: { tool: Tool; index: number }) => {
@@ -303,6 +303,29 @@ export default function Rankings() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [featuredFilter, setFeaturedFilter] = useState('populaires');
   const featuredScrollRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const itemsPerPage = 4; // Nombre d'éléments visibles à la fois
+  const [infiniteTools, setInfiniteTools] = useState<Tool[]>([]);
+
+  // Fonction pour faire défiler le carrousel vers la gauche
+  const scrollLeft = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+    } else {
+      // Si on est au début, on se place à la fin
+      setCurrentIndex(infiniteTools.length - itemsPerPage);
+    }
+  };
+
+  // Fonction pour faire défiler le carrousel vers la droite
+  const scrollRight = () => {
+    if (currentIndex < infiniteTools.length - itemsPerPage) {
+      setCurrentIndex(prev => prev + 1);
+    } else {
+      // Si on est à la fin, on revient au début
+      setCurrentIndex(0);
+    }
+  };
 
   const fetchTools = async () => {
     try {
@@ -335,42 +358,6 @@ export default function Rankings() {
     }
   };
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const [toolsData, categoriesData] = await Promise.all([
-          fetchTools(),
-          fetchCategories()
-        ]);
-
-        const toolsWithScores = toolsData.map((tool: Tool) => ({
-          ...tool,
-          popularityScore: calculatePopularityScore(tool)
-        }));
-
-        const sortedTools = toolsWithScores.sort(
-          (a: Tool & { popularityScore: number }, b: Tool & { popularityScore: number }) => 
-            b.popularityScore - a.popularityScore
-        );
-
-        setTools(sortedTools);
-        setCategories(categoriesData);
-      } catch (error) {
-        console.error('Error loading data:', error);
-        setError(
-          'Une erreur est survenue lors du chargement des données. Veuillez réessayer.'
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadData();
-  }, [selectedCategory, searchQuery]);
-
   const getBadges = useCallback((tool: Tool) => {
     const badges = [];
     if (tool.is_verified) badges.push('Vérifié');
@@ -396,74 +383,106 @@ export default function Rankings() {
   const formatNumber = useCallback((num: number) => {
     if (num >= 1000000) {
       return (num / 1000000).toFixed(1) + 'M';
-    }
-    if (num >= 1000) {
+    } else if (num >= 1000) {
       return (num / 1000).toFixed(1) + 'K';
     }
     return num.toString();
   }, []);
 
-  const featuredTools = useMemo(() => {
+  // Création d'un tableau circulaire pour le carrousel infini
+  const createInfiniteArray = useCallback((arr: Tool[]) => {
+    if (arr.length === 0) return [];
+    // Créer une copie profonde pour éviter les références
+    return [...arr, ...arr, ...arr];
+  }, []);
+
+  // Effet pour charger les données initiales
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        const [toolsData, categoriesData] = await Promise.all([
+          fetchTools(),
+          fetchCategories()
+        ]);
+        setTools(toolsData);
+        setCategories(categoriesData);
+        setError(null);
+      } catch (err) {
+        console.error('Error loading data:', err);
+        setError('Failed to load data. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [selectedCategory, searchQuery]);
+
+  // Effet pour mettre à jour les outils en vedette quand les outils ou le filtre changent
+  useEffect(() => {
+    if (tools.length === 0) return;
+
+    // Filtrer et trier les outils selon le filtre sélectionné
     let filtered = [...tools];
     
+    // Ajouter un score de popularité pour le tri
+    filtered = filtered.map(tool => ({
+      ...tool,
+      popularityScore: calculatePopularityScore(tool)
+    }));
+    
+    // Filtrer selon le type sélectionné
     if (featuredFilter === 'populaires') {
-      return filtered
-        .filter((tool) => tool.monthly_users > 100000)
-        .sort((a, b) => b.monthly_users - a.monthly_users)
-        .slice(0, 12);
+      // Trier par popularité
+      filtered.sort((a, b) => (b.popularityScore || 0) - (a.popularityScore || 0));
     } else if (featuredFilter === 'nouveaux') {
-      return filtered
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 12);
+      // Simuler un tri par date (dans un vrai cas, vous auriez une date de création)
+      filtered.sort((a, b) => b.id.localeCompare(a.id)); // Utiliser l'ID comme proxy pour la date
     } else if (featuredFilter === 'recommandés') {
-      return filtered
-        .filter((tool) => tool.average_rating > 4.5)
-        .sort((a, b) => b.average_rating - a.average_rating)
-        .slice(0, 12);
+      // Trier par note moyenne
+      filtered.sort((a, b) => b.average_rating - a.average_rating);
     }
     
-    return filtered.slice(0, 12);
+    // Prendre les 8 premiers outils pour la section en vedette
+    const featuredTools = filtered.slice(0, 8);
+    
+    // S'assurer qu'il y a au moins un outil pour éviter les erreurs
+    if (featuredTools.length === 0) {
+      setInfiniteTools([]);
+      return;
+    }
+    
+    // Créer le tableau infini en répétant les outils plusieurs fois
+    // pour garantir qu'il y a toujours des éléments visibles dans le carrousel
+    const repeatedTools = [];
+    const repetitions = Math.max(10, Math.ceil(20 / featuredTools.length));
+    
+    for (let i = 0; i < repetitions; i++) {
+      repeatedTools.push(...featuredTools);
+    }
+    
+    setInfiniteTools(repeatedTools);
+    
+    // Réinitialiser l'index au début pour un défilement fluide
+    setCurrentIndex(0);
   }, [tools, featuredFilter]);
-
-  const top10Tools = useMemo(() => tools.slice(0, 10), [tools]);
 
   useEffect(() => {
     const scrollContainer = featuredScrollRef.current;
     if (!scrollContainer) return;
 
-    let scrollAmount = 0;
-    let isHovering = false;
-
-    const handleMouseEnter = () => {
-      isHovering = true;
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      scrollContainer.scrollLeft += e.deltaY;
     };
 
-    const handleMouseLeave = () => {
-      isHovering = false;
-    };
-
-    const scroll = () => {
-      if (scrollContainer && !isHovering) {
-        scrollAmount += 0.5;
-        if (scrollAmount >= scrollContainer.scrollWidth / 2) {
-          scrollAmount = 0;
-        }
-        scrollContainer.scrollLeft = scrollAmount;
-      }
-      requestAnimationFrame(scroll);
-    };
-
-    scrollContainer.addEventListener('mouseenter', handleMouseEnter);
-    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
-    
-    const animationId = requestAnimationFrame(scroll);
+    scrollContainer.addEventListener('wheel', handleWheel);
 
     return () => {
-      scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
-      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
-      cancelAnimationFrame(animationId);
+      scrollContainer.removeEventListener('wheel', handleWheel);
     };
-  }, [featuredTools]);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -561,30 +580,43 @@ export default function Rankings() {
               </button>
             </div>
             
-            <div 
-              ref={featuredScrollRef}
-              className="featured-scroll-container overflow-x-auto pb-6 -mx-4 px-4 hide-scrollbar"
-            >
-              <div className="featured-scroll-content inline-flex gap-6 min-w-max">
-                {featuredTools.map((tool, index) => (
-                  <div key={tool.id} className="w-64 flex-shrink-0">
-                    <FeaturedToolCard 
-                      tool={tool} 
-                      isTrending={index < 3 && featuredFilter === 'populaires'} 
-                      isSponsored={index < 2 && featuredFilter === 'recommandés'} 
-                    />
-                  </div>
-                ))}
-                {featuredTools.slice(0, 4).map((tool, index) => (
-                  <div key={`duplicate-${tool.id}`} className="w-64 flex-shrink-0">
-                    <FeaturedToolCard 
-                      tool={tool} 
-                      isTrending={index < 3 && featuredFilter === 'populaires'} 
-                      isSponsored={index < 2 && featuredFilter === 'recommandés'} 
-                    />
-                  </div>
-                ))}
+            <div className="relative w-full my-4">
+              {/* Bouton de navigation gauche */}
+              <button 
+                type="button"
+                onClick={scrollLeft}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -ml-6 z-30 w-12 h-12 rounded-full bg-gray-900/80 border border-indigo-500/30 text-indigo-400 flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:bg-indigo-500/20 hover:text-white hover:border-indigo-400 focus:outline-none"
+                aria-label="Défiler vers la gauche"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              
+              <div className="overflow-hidden w-full px-4">
+                <div 
+                  className="flex gap-6 transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${currentIndex * 280}px)` }}
+                >
+                  {infiniteTools.map((tool, index) => (
+                    <div key={`${tool.id}-${index}`} className="w-64 flex-shrink-0">
+                      <FeaturedToolCard 
+                        tool={tool} 
+                        isTrending={index % 8 < 3 && featuredFilter === 'populaires'} 
+                        isSponsored={index % 8 < 2 && featuredFilter === 'recommandés'} 
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
+              
+              {/* Bouton de navigation droite */}
+              <button 
+                type="button"
+                onClick={scrollRight}
+                className="absolute right-0 top-1/2 -translate-y-1/2 -mr-6 z-30 w-12 h-12 rounded-full bg-gray-900/80 border border-indigo-500/30 text-indigo-400 flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:bg-indigo-500/20 hover:text-white hover:border-indigo-400 focus:outline-none"
+                aria-label="Défiler vers la droite"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
             </div>
           </div>
           
@@ -603,7 +635,7 @@ export default function Rankings() {
               position: relative;
               padding: 2rem;
               border-radius: 1rem;
-              background: rgba(13, 18, 30, 0.7);
+              background: rgba(13, 15, 29, 0.7);
               backdrop-filter: blur(10px);
               border: 1px solid rgba(78, 78, 231, 0.2);
               box-shadow: 0 10px 30px -5px rgba(2, 12, 27, 0.7);
@@ -855,7 +887,7 @@ export default function Rankings() {
 
           <div className="magic-grid bg-gray-900/30 p-6 rounded-xl">
             <div className="grid grid-cols-5 gap-4">
-              {top10Tools.map((tool, index) => (
+              {tools.slice(0, 10).map((tool, index) => (
                 <TopToolCard key={tool.id} tool={tool} index={index} />
               ))}
             </div>
@@ -870,11 +902,11 @@ export default function Rankings() {
 
         {!isLoading && !error && (
           <div className="space-y-6">
-            {tools.map((tool, index) => (
+            {tools.slice(10).map((tool, index) => (
               <ToolListCard
                 key={tool.id}
                 tool={tool}
-                index={index}
+                index={index + 10}
                 formatNumber={formatNumber}
                 formatPrice={formatPrice}
                 getBadges={getBadges}
