@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { TrendingUp, Star, Users, Eye, MessageSquare, ArrowUpRight, Search, Trophy, Sparkles, Zap, Crown, ChevronDown } from 'lucide-react';
+import { TrendingUp, Star, Users, Eye, MessageSquare, ArrowUpRight, Search, Trophy, Sparkles, Zap, Crown, ChevronDown, Flame, Clock, ThumbsUp } from 'lucide-react';
 import { getTools, getCategories } from '../lib/supabase';
 import PopupTopRanking from '../components/PopupTopRanking';
 
@@ -9,6 +9,7 @@ interface Tool {
   description: string;
   category: {
     name: string;
+    slug: string;
   };
   average_rating: number;
   total_reviews: number;
@@ -22,6 +23,7 @@ interface Tool {
     plan_name: string;
     price: number;
   }[];
+  popularityScore?: number;
 }
 
 interface Category {
@@ -233,6 +235,63 @@ const ToolListCard = React.memo(({ tool, index, formatNumber, formatPrice, getBa
   );
 });
 
+const FeaturedToolCard = React.memo(({ tool, isTrending, isSponsored }: { 
+  tool: Tool; 
+  isTrending?: boolean;
+  isSponsored?: boolean;
+}) => {
+  return (
+    <div className="featured-card relative group">
+      <div className="card-inner bg-gray-900/70 backdrop-blur-md rounded-xl overflow-hidden border border-gray-800 hover:border-indigo-500 transition-all duration-500 transform group-hover:scale-[1.03] group-hover:shadow-xl group-hover:shadow-indigo-500/20 h-full flex flex-col">
+        <div className="relative h-32 overflow-hidden">
+          <img
+            src={tool.image_url}
+            alt={tool.name}
+            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+            loading="lazy"
+          />
+          {isTrending && (
+            <div className="absolute top-2 left-2 px-2 py-0.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full flex items-center gap-1">
+              <Flame className="w-3 h-3" />
+              Tendance
+            </div>
+          )}
+          {isSponsored && (
+            <div className="absolute top-2 left-2 px-2 py-0.5 bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-xs font-bold rounded-full flex items-center gap-1">
+              <Star className="w-3 h-3" />
+              Sponsorisé
+            </div>
+          )}
+        </div>
+        <div className="p-4 flex flex-col flex-grow">
+          <h3 className="text-base font-semibold mb-2 group-hover:text-indigo-400 transition-colors">
+            {tool.name}
+          </h3>
+          <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-grow">
+            {tool.description}
+          </p>
+          <div className="flex items-center justify-between mt-auto">
+            <div className="flex items-center gap-1">
+              <Star className="w-3 h-3 text-yellow-500" />
+              <span className="text-xs font-medium">{tool.average_rating.toFixed(1)}</span>
+            </div>
+            <a
+              href={tool.website_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white text-xs font-medium rounded-full transition-all duration-300 transform group-hover:scale-105 flex items-center gap-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Découvrir
+              <ArrowUpRight className="w-3 h-3 group-hover:rotate-45 transition-transform" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
 export default function Rankings() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -242,20 +301,39 @@ export default function Rankings() {
   const [error, setError] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [featuredFilter, setFeaturedFilter] = useState('populaires');
+  const featuredScrollRef = useRef<HTMLDivElement>(null);
 
-  // Fermer le dropdown quand on clique ailleurs
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
+  const fetchTools = async () => {
+    try {
+      const data = await getTools({
+        category: selectedCategory === 'all' ? undefined : selectedCategory,
+        search: searchQuery
+      });
+      
+      // S'assurer que chaque outil a une propriété slug dans category
+      return data.map((tool: any) => ({
+        ...tool,
+        category: {
+          ...tool.category,
+          slug: tool.category.slug || tool.category.name?.toLowerCase().replace(/\s+/g, '-') || 'uncategorized'
+        }
+      }));
+    } catch (error) {
+      console.error('Error fetching tools:', error);
+      return [];
     }
+  };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories();
+      return data;
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      return [];
+    }
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -264,25 +342,27 @@ export default function Rankings() {
         setError(null);
 
         const [toolsData, categoriesData] = await Promise.all([
-          getTools({
-            category: selectedCategory === 'all' ? undefined : selectedCategory,
-            search: searchQuery
-          }),
-          getCategories()
+          fetchTools(),
+          fetchCategories()
         ]);
 
-        const toolsWithScores = toolsData.map(tool => ({
+        const toolsWithScores = toolsData.map((tool: Tool) => ({
           ...tool,
           popularityScore: calculatePopularityScore(tool)
         }));
 
-        const sortedTools = toolsWithScores.sort((a, b) => b.popularityScore - a.popularityScore);
+        const sortedTools = toolsWithScores.sort(
+          (a: Tool & { popularityScore: number }, b: Tool & { popularityScore: number }) => 
+            b.popularityScore - a.popularityScore
+        );
 
         setTools(sortedTools);
         setCategories(categoriesData);
       } catch (error) {
         console.error('Error loading data:', error);
-        setError('Une erreur est survenue lors du chargement des données. Veuillez réessayer.');
+        setError(
+          'Une erreur est survenue lors du chargement des données. Veuillez réessayer.'
+        );
       } finally {
         setIsLoading(false);
       }
@@ -305,8 +385,8 @@ export default function Rankings() {
   const formatPrice = useCallback((tool: Tool) => {
     if (!tool.pricing?.length) return 'Gratuit';
     
-    const hasFree = tool.pricing.some(p => p.price === 0);
-    const hasPaid = tool.pricing.some(p => p.price > 0);
+    const hasFree = tool.pricing.some((p) => p.price === 0);
+    const hasPaid = tool.pricing.some((p) => p.price > 0);
     
     if (hasFree && hasPaid) return 'Gratuit / Premium';
     if (hasFree) return 'Gratuit';
@@ -323,7 +403,80 @@ export default function Rankings() {
     return num.toString();
   }, []);
 
+  const featuredTools = useMemo(() => {
+    let filtered = [...tools];
+    
+    if (featuredFilter === 'populaires') {
+      return filtered
+        .filter((tool) => tool.monthly_users > 100000)
+        .sort((a, b) => b.monthly_users - a.monthly_users)
+        .slice(0, 12);
+    } else if (featuredFilter === 'nouveaux') {
+      return filtered
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 12);
+    } else if (featuredFilter === 'recommandés') {
+      return filtered
+        .filter((tool) => tool.average_rating > 4.5)
+        .sort((a, b) => b.average_rating - a.average_rating)
+        .slice(0, 12);
+    }
+    
+    return filtered.slice(0, 12);
+  }, [tools, featuredFilter]);
+
   const top10Tools = useMemo(() => tools.slice(0, 10), [tools]);
+
+  useEffect(() => {
+    const scrollContainer = featuredScrollRef.current;
+    if (!scrollContainer) return;
+
+    let scrollAmount = 0;
+    let isHovering = false;
+
+    const handleMouseEnter = () => {
+      isHovering = true;
+    };
+
+    const handleMouseLeave = () => {
+      isHovering = false;
+    };
+
+    const scroll = () => {
+      if (scrollContainer && !isHovering) {
+        scrollAmount += 0.5;
+        if (scrollAmount >= scrollContainer.scrollWidth / 2) {
+          scrollAmount = 0;
+        }
+        scrollContainer.scrollLeft = scrollAmount;
+      }
+      requestAnimationFrame(scroll);
+    };
+
+    scrollContainer.addEventListener('mouseenter', handleMouseEnter);
+    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+    
+    const animationId = requestAnimationFrame(scroll);
+
+    return () => {
+      scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
+      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+      cancelAnimationFrame(animationId);
+    };
+  }, [featuredTools]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0B0F19] text-white px-6 py-12">
@@ -348,9 +501,192 @@ export default function Rankings() {
           <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mb-4">
             Classement des outils IA
           </h1>
-          <p className="text-center text-gray-400 mb-12 max-w-3xl mx-auto">
+          <p className="text-center text-gray-400 mb-8 max-w-3xl mx-auto">
             Découvrez les outils d'IA les plus populaires et les mieux notés
           </p>
+        </div>
+
+        <div className="mb-12 relative overflow-hidden featured-section">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-indigo-500/5 rounded-xl"></div>
+          
+          <div className="relative z-10">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+              <Sparkles className="w-6 h-6 text-purple-500" />
+              <span className="bg-gradient-to-r from-purple-500 to-indigo-400 text-transparent bg-clip-text">
+                En vedette
+              </span>
+            </h2>
+            
+            <div className="flex items-center gap-4 mb-6">
+              <button 
+                onClick={() => setFeaturedFilter('populaires')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  featuredFilter === 'populaires' 
+                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/20' 
+                    : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Flame className="w-4 h-4" />
+                  Populaires
+                </div>
+              </button>
+              
+              <button 
+                onClick={() => setFeaturedFilter('nouveaux')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  featuredFilter === 'nouveaux' 
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/20' 
+                    : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  Nouveaux
+                </div>
+              </button>
+              
+              <button 
+                onClick={() => setFeaturedFilter('recommandés')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  featuredFilter === 'recommandés' 
+                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg shadow-green-500/20' 
+                    : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <ThumbsUp className="w-4 h-4" />
+                  Recommandés
+                </div>
+              </button>
+            </div>
+            
+            <div 
+              ref={featuredScrollRef}
+              className="featured-scroll-container overflow-x-auto pb-6 -mx-4 px-4 hide-scrollbar"
+            >
+              <div className="featured-scroll-content inline-flex gap-6 min-w-max">
+                {featuredTools.map((tool, index) => (
+                  <div key={tool.id} className="w-64 flex-shrink-0">
+                    <FeaturedToolCard 
+                      tool={tool} 
+                      isTrending={index < 3 && featuredFilter === 'populaires'} 
+                      isSponsored={index < 2 && featuredFilter === 'recommandés'} 
+                    />
+                  </div>
+                ))}
+                {featuredTools.slice(0, 4).map((tool, index) => (
+                  <div key={`duplicate-${tool.id}`} className="w-64 flex-shrink-0">
+                    <FeaturedToolCard 
+                      tool={tool} 
+                      isTrending={index < 3 && featuredFilter === 'populaires'} 
+                      isSponsored={index < 2 && featuredFilter === 'recommandés'} 
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="particle particle-1"></div>
+            <div className="particle particle-2"></div>
+            <div className="particle particle-3"></div>
+            <div className="particle particle-4"></div>
+          </div>
+          
+          <div className="absolute top-0 bottom-0 left-0 w-16 bg-gradient-to-r from-[#0B0F19] to-transparent z-20 pointer-events-none"></div>
+          <div className="absolute top-0 bottom-0 right-0 w-16 bg-gradient-to-l from-[#0B0F19] to-transparent z-20 pointer-events-none"></div>
+          
+          <style>{`
+            .featured-section {
+              position: relative;
+              padding: 2rem;
+              border-radius: 1rem;
+              background: rgba(13, 18, 30, 0.7);
+              backdrop-filter: blur(10px);
+              border: 1px solid rgba(78, 78, 231, 0.2);
+              box-shadow: 0 10px 30px -5px rgba(2, 12, 27, 0.7);
+            }
+            
+            .featured-card {
+              perspective: 1000px;
+            }
+            
+            .card-inner {
+              transform-style: preserve-3d;
+              transition: transform 0.5s;
+            }
+            
+            .featured-scroll-container {
+              -ms-overflow-style: none;
+              scrollbar-width: none;
+            }
+            
+            .featured-scroll-container::-webkit-scrollbar {
+              display: none;
+            }
+            
+            .hide-scrollbar {
+              -ms-overflow-style: none;
+              scrollbar-width: none;
+            }
+            
+            .hide-scrollbar::-webkit-scrollbar {
+              display: none;
+            }
+            
+            @keyframes float-particle {
+              0%, 100% { transform: translateY(0) translateX(0); }
+              25% { transform: translateY(-20px) translateX(10px); }
+              50% { transform: translateY(-10px) translateX(20px); }
+              75% { transform: translateY(-30px) translateX(-10px); }
+            }
+            
+            .particle {
+              position: absolute;
+              border-radius: 50%;
+              opacity: 0.3;
+              filter: blur(8px);
+              animation: float-particle 15s infinite ease-in-out;
+            }
+            
+            .particle-1 {
+              width: 100px;
+              height: 100px;
+              background: radial-gradient(circle, rgba(147, 51, 234, 0.7) 0%, rgba(79, 70, 229, 0) 70%);
+              top: 10%;
+              left: 20%;
+              animation-delay: 0s;
+            }
+            
+            .particle-2 {
+              width: 150px;
+              height: 150px;
+              background: radial-gradient(circle, rgba(59, 130, 246, 0.7) 0%, rgba(59, 130, 246, 0) 70%);
+              top: 50%;
+              right: 15%;
+              animation-delay: -5s;
+            }
+            
+            .particle-3 {
+              width: 80px;
+              height: 80px;
+              background: radial-gradient(circle, rgba(236, 72, 153, 0.7) 0%, rgba(236, 72, 153, 0) 70%);
+              bottom: 20%;
+              left: 30%;
+              animation-delay: -2s;
+            }
+            
+            .particle-4 {
+              width: 120px;
+              height: 120px;
+              background: radial-gradient(circle, rgba(16, 185, 129, 0.7) 0%, rgba(16, 185, 129, 0) 70%);
+              top: 30%;
+              right: 30%;
+              animation-delay: -8s;
+            }
+          `}</style>
         </div>
 
         <div className="mb-8 space-y-6">
